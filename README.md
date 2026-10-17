@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Miami Physical Therapy Center — website
 
-## Getting Started
-
-First, run the development server:
+Bilingual (Arabic RTL / English) Next.js 16 site for Miami Physical Therapy Center.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000 → redirects to /ar
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | What |
+| --- | --- |
+| `src/app/[lang]/` | All pages: home, services, about, team, branches, blog, booking, contact |
+| `src/lib/data.ts` | **Business data** — branches, phones, services, team, stats, FAQs, reviews |
+| `src/lib/i18n.ts` | UI strings for `ar` / `en` |
+| `content/blog/<slug>/{ar,en}.md` | Blog posts (Markdown + frontmatter). Add a folder to publish a post |
+| `src/components/sections/branch-globe.tsx` | Interactive Three.js globe for the branches section (NASA Blue Marble textures in `public/textures`) |
+| `src/lib/booking*.ts`, `src/app/[lang]/booking/` | Booking flow, slot rules and storage |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Booking
 
-## Learn More
+Patients pick service → branch → date/time → details. Slots run hourly 10:00–23:00 (Cairo time),
+21 days ahead, max `SLOT_CAPACITY` (4) bookings per branch per slot — all configurable in
+`src/lib/booking.ts` / `clinic.hours` in `data.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+Bookings are saved to `data/bookings.json` (git-ignored). For production, set:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `BOOKING_WEBHOOK_URL` — every booking is POSTed here as JSON (Zapier / Make / n8n → Google Sheets, email, WhatsApp Business…)
+- `NEXT_PUBLIC_SITE_URL` — canonical URL for SEO (defaults to `https://miamiclinic.net`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+On serverless hosts (Vercel) the filesystem is read-only — use the webhook or replace
+`src/lib/booking-store.ts` with a database.
 
-## Deploy on Vercel
+## To confirm with the clinic
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Opening hours: the old site says "10 AM – 12" — assumed **midnight**.
+- Moharam Bek branch has only a short address on the old site.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- English blog posts are adaptations of the Arabic originals; the two new posts (heel spur, knee arthritis) should be reviewed by the medical team.

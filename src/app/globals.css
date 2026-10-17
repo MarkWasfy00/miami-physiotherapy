@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Brand palette, taken from the Miami Clinic logo */
+  --color-brand-50: #eef7ff;
+  --color-brand-100: #d9edff;
+  --color-brand-200: #bce0ff;
+  --color-brand-300: #8ecdff;
+  --color-brand-400: #59b0fb;
+  --color-brand-500: #2f93f2;
+  --color-brand-600: #0f83e9;
+  --color-brand-700: #0d63bb;
+  --color-brand-800: #115497;
+  --color-brand-900: #13477b;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-lime-400: #a3d43a;
+  --color-lime-500: #88be1f;
+  --color-lime-600: #6b9a14;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-teal-600: #087fa0;
+
+  --color-ink: #0b2530;
+  --color-ink-soft: #4d6670;
+  --color-mist: #f3f8fb;
+  --color-line: #dfeaf0;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-4xl: 2rem;
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-white text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-600 text-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
+
+@utility container-x {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white shadow-lg shadow-brand-600/25 hover:bg-brand-700 hover:shadow-brand-700/30;
+}
+@utility btn-lime {
+  @apply btn bg-lime-500 text-ink shadow-lg shadow-lime-500/25 hover:bg-lime-400;
+}
+@utility btn-outline {
+  @apply btn border border-line bg-white text-ink hover:border-brand-300 hover:text-brand-700;
+}
+@utility btn-ghost-light {
+  @apply btn border border-white/25 bg-white/10 text-white backdrop-blur hover:bg-white/20;
+}
+
+@utility eyebrow {
+  @apply inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700;
+}
+
+@utility card {
+  @apply rounded-3xl border border-line bg-white;
+}
+
+@utility field {
+  @apply w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm text-ink transition placeholder:text-ink-soft/60 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none;
+}
+
+@layer components {
+  /* Long-form article typography */
+  .prose-article {
+    @apply text-[1.0625rem] leading-8 text-ink/85;
+  }
+  .prose-article > * + * {
+    @apply mt-5;
+  }
+  .prose-article h2 {
+    @apply mt-12 scroll-mt-28 text-2xl font-bold text-ink;
+  }
+  .prose-article h3 {
+    @apply mt-8 scroll-mt-28 text-lg font-bold text-ink;
+  }
+  .prose-article ul {
+    @apply space-y-2 ps-5;
+    list-style: disc;
+  }
+  .prose-article ol {
+    @apply space-y-2 ps-5;
+    list-style: decimal;
+  }
+  .prose-article li::marker {
+    @apply text-brand-600;
+  }
+  .prose-article strong {
+    @apply font-semibold text-ink;
+  }
+  .prose-article blockquote {
+    @apply rounded-2xl border-s-4 border-lime-500 bg-mist px-5 py-4 text-ink;
+  }
+  .prose-article blockquote p {
+    @apply m-0;
+  }
+}
+
+/* Hide scrollbar for horizontal chip rows */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
