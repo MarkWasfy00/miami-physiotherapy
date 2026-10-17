@@ -10,6 +10,7 @@ import { faqJsonLd, JsonLd, pageAlternates } from "@/lib/seo";
 import { ModalityIcon, ServiceIcon, SocialIcon } from "@/components/ui/icons";
 import { BlogCard, CtaBanner, FaqList, SectionHeading } from "@/components/ui/blocks";
 import { BranchGlobe } from "@/components/sections/branch-globe";
+import { HeroSpine } from "@/components/sections/hero-spine";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const { lang } = await params;
@@ -104,20 +105,27 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
             </div>
           </div>
 
-          {/* Arch image */}
+          {/* 3D spine (falls back to the arch photo without WebGL) */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <div className="absolute -inset-x-6 -top-6 bottom-16 rounded-t-full border-2 border-dashed border-lime-400/60" aria-hidden />
-            <div className="relative aspect-[4/5] overflow-hidden rounded-t-full rounded-b-[2.5rem] bg-brand-100 shadow-2xl shadow-brand-900/15">
-              <Image
-                src="/images/photos/rehab-session.webp"
-                alt={ar ? "أخصائي علاج طبيعي مع مريض في مركز ميامي" : "Physiotherapist treating a patient at Miami Clinic"}
-                fill
-                priority
-                sizes="(min-width: 1024px) 40vw, 90vw"
-                className="object-cover object-top"
-              />
-              <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/50 to-transparent" />
-            </div>
+            <HeroSpine
+              lang={lang}
+              fallback={
+                <>
+                  <div className="absolute -inset-x-6 -top-6 bottom-16 rounded-t-full border-2 border-dashed border-lime-400/60" aria-hidden />
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-t-full rounded-b-[2.5rem] bg-brand-100 shadow-2xl shadow-brand-900/15">
+                    <Image
+                      src="/images/photos/rehab-session.webp"
+                      alt={ar ? "أخصائي علاج طبيعي مع مريض في مركز ميامي" : "Physiotherapist treating a patient at Miami Clinic"}
+                      fill
+                      priority
+                      sizes="(min-width: 1024px) 40vw, 90vw"
+                      className="object-cover object-top"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/50 to-transparent" />
+                  </div>
+                </>
+              }
+            />
 
             <div className="absolute -start-4 top-1/3 animate-float rounded-2xl border border-white/60 bg-white/90 p-4 shadow-xl backdrop-blur-md sm:-start-10">
               <p className="text-3xl font-bold text-ink" dir="ltr">
