@@ -5,6 +5,7 @@ import { team } from "@/lib/data";
 import { getDictionary, href, isLocale, type Locale } from "@/lib/i18n";
 import { pageAlternates } from "@/lib/seo";
 import { CtaBanner, PageHero, TeamCard } from "@/components/ui/blocks";
+import { Badge } from "@/components/ui/badge";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/team">): Promise<Metadata> {
   const { lang } = await params;
@@ -42,17 +43,19 @@ export default async function TeamPage({ params }: PageProps<"/[lang]/team">) {
             : "The center is led by highly experienced specialists, supported by more than 100 therapists and staff across our five branches."
         }
       >
-        <ul className="mt-8 flex flex-wrap gap-3">
+        <ul className="mt-8 flex flex-wrap gap-2 sm:gap-3">
           {highlights.map(({ icon: Icon, text }) => (
-            <li key={text} className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm">
-              <Icon className="size-4 text-lime-600" aria-hidden />
-              {text}
+            <li key={text}>
+              <Badge variant="outline" className="h-auto gap-2 border-transparent bg-white px-4 py-2 text-sm font-medium whitespace-normal text-ink shadow-sm">
+                <Icon className="size-4! text-lime-600" aria-hidden />
+                {text}
+              </Badge>
             </li>
           ))}
         </ul>
       </PageHero>
-      <section className="container-x py-16 sm:py-24">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="container-x py-12 sm:py-24">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
           {team.map((m) => (
             <TeamCard key={m.slug} member={m} lang={lang} />
           ))}

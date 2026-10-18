@@ -7,6 +7,8 @@ import { getDictionary, href, isLocale, locales, t } from "@/lib/i18n";
 import { breadcrumbJsonLd, JsonLd, pageAlternates, singleBranchJsonLd } from "@/lib/seo";
 import { BranchCard, CtaBanner, PageHero } from "@/components/ui/blocks";
 import { ServiceIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export function generateStaticParams() {
   return locales.flatMap((lang) => branches.map((b) => ({ lang, slug: b.slug })));
@@ -48,18 +50,18 @@ export default async function BranchPage({ params }: PageProps<"/[lang]/branches
         text={`${t(branch.address, lang)} · ${t(branch.landmark, lang)}`}
       />
 
-      <section className="container-x grid gap-8 py-16 sm:py-24 lg:grid-cols-[1fr_24rem]">
-        <div className="overflow-hidden rounded-4xl border border-line bg-mist">
+      <section className="container-x grid gap-6 py-10 sm:gap-8 sm:py-24 lg:grid-cols-[1fr_24rem]">
+        <div className="overflow-hidden rounded-3xl border border-line bg-mist sm:rounded-4xl">
           <iframe
             title={name}
             src={mapEmbedUrl(branch.mapQuery)}
-            className="aspect-[4/3] h-full min-h-80 w-full"
+            className="aspect-[4/3] h-full min-h-72 w-full sm:min-h-80"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
         <div className="space-y-4">
-          <div className="card space-y-5 p-6">
+          <Card className="gap-5 p-6">
             <div className="flex gap-3">
               <MapPin className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden />
               <div>
@@ -77,7 +79,7 @@ export default async function BranchPage({ params }: PageProps<"/[lang]/branches
                 <p className="text-sm font-semibold text-ink">{dict.common.phone}</p>
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                   {branch.phones.map((p) => (
-                    <a key={p} href={`tel:${p}`} dir="ltr" className="text-sm font-medium text-brand-700 hover:underline">
+                    <a key={p} href={`tel:${p}`} dir="ltr" className="py-1 text-sm font-medium text-brand-700 hover:underline">
                       {p}
                     </a>
                   ))}
@@ -91,19 +93,23 @@ export default async function BranchPage({ params }: PageProps<"/[lang]/branches
                 <p className="mt-1 text-sm text-ink-soft">{dict.common.hours}</p>
               </div>
             </div>
-          </div>
-          <Link href={`${href(lang, "/booking")}?branch=${branch.slug}`} className="btn-primary w-full !py-3.5">
-            <CalendarCheck className="size-4" aria-hidden />
-            {ar ? `احجز في ${name}` : `Book at ${name}`}
-          </Link>
-          <a href={mapLink(branch.mapQuery)} target="_blank" rel="noopener noreferrer" className="btn-outline w-full !py-3.5">
-            <Navigation className="size-4" aria-hidden />
-            {dict.cta.directions}
-          </a>
+          </Card>
+          <Button asChild size="lg" className="w-full text-sm">
+            <Link href={`${href(lang, "/booking")}?branch=${branch.slug}`}>
+              <CalendarCheck className="size-4" aria-hidden />
+              {ar ? `احجز في ${name}` : `Book at ${name}`}
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="w-full text-sm">
+            <a href={mapLink(branch.mapQuery)} target="_blank" rel="noopener noreferrer">
+              <Navigation className="size-4" aria-hidden />
+              {dict.cta.directions}
+            </a>
+          </Button>
         </div>
       </section>
 
-      <section className="bg-mist py-16 sm:py-20">
+      <section className="bg-mist py-12 sm:py-20">
         <div className="container-x">
           <h2 className="text-2xl font-bold text-ink">
             {ar ? `الخدمات المتاحة في ${name}` : `Services available at ${name}`}
@@ -126,7 +132,7 @@ export default async function BranchPage({ params }: PageProps<"/[lang]/branches
       </section>
 
       {nearby.length > 0 && (
-        <section className="container-x py-16 sm:py-20">
+        <section className="container-x py-12 sm:py-20">
           <h2 className="text-2xl font-bold text-ink">{ar ? "فروع أخرى قريبة" : "Other branches nearby"}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {nearby.map((b) => (

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans } from "next/font/google";
 import { Footer, WhatsAppFab } from "@/components/layout/footer";
 import { Header, HeaderView } from "@/components/layout/header";
+import { DirectionProvider } from "@/components/ui/direction";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { siteUrl } from "@/lib/data";
 import { dir, getDictionary, isLocale, localeParams } from "@/lib/i18n";
@@ -52,6 +53,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 
 export const viewport: Viewport = {
   themeColor: "#0f83e9",
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
@@ -67,21 +69,23 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       style={{ ["--font-body" as string]: lang === "ar" ? "var(--font-arabic)" : "var(--font-latin)" }}
     >
       <body className="flex min-h-dvh flex-col" suppressHydrationWarning>
-        <a
-          href="#main"
-          className="sr-only z-[60] rounded-full bg-brand-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
-        >
-          {dict.common.skip}
-        </a>
-        <Suspense fallback={<HeaderView lang={lang} dict={dict} pathname={`/${lang}`} />}>
-          <Header lang={lang} dict={dict} />
-        </Suspense>
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer lang={lang} dict={dict} />
-        <WhatsAppFab lang={lang} />
-        <JsonLd data={organizationJsonLd(lang)} />
+        <DirectionProvider dir={dir(lang)}>
+          <a
+            href="#main"
+            className="sr-only z-[60] rounded-full bg-brand-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
+          >
+            {dict.common.skip}
+          </a>
+          <Suspense fallback={<HeaderView lang={lang} dict={dict} pathname={`/${lang}`} />}>
+            <Header lang={lang} dict={dict} />
+          </Suspense>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer lang={lang} dict={dict} />
+          <WhatsAppFab lang={lang} />
+          <JsonLd data={organizationJsonLd(lang)} />
+        </DirectionProvider>
       </body>
     </html>
   );

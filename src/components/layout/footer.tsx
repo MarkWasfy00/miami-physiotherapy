@@ -3,14 +3,16 @@ import Link from "next/link";
 import { Clock, Mail, Phone } from "lucide-react";
 import { branches, cities, clinic, services } from "@/lib/data";
 import { href, t, type Dictionary, type Locale } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 import { SocialIcon } from "@/components/ui/icons";
+import { Separator } from "@/components/ui/separator";
 
 export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   const year = 2026;
   return (
     <footer className="bg-ink text-white/70">
-      <div className="container-x grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
-        <div>
+      <div className="container-x grid grid-cols-2 gap-x-6 gap-y-10 py-14 sm:py-16 md:gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1.3fr]">
+        <div className="col-span-2 lg:col-span-1">
           <Link href={href(lang)} className="inline-flex items-center gap-3">
             <span className="flex size-14 items-center justify-center rounded-2xl bg-white p-2">
               <Image src="/logo-mark.png" alt="" width={34} height={42} className="h-10 w-auto" />
@@ -24,35 +26,26 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           </p>
           <div className="mt-6 flex gap-2">
             {(["facebook", "instagram", "youtube"] as const).map((s) => (
-              <a
-                key={s}
-                href={clinic.social[s]}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={s}
-                className="flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-brand-600"
-              >
-                <SocialIcon name={s} className="size-4" />
-              </a>
+              <Button key={s} asChild variant="glass" size="icon" className="border-transparent hover:bg-brand-600">
+                <a href={clinic.social[s]} target="_blank" rel="noopener noreferrer" aria-label={s}>
+                  <SocialIcon name={s} className="size-4" />
+                </a>
+              </Button>
             ))}
-            <a
-              href={`https://wa.me/${clinic.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#25D366]"
-            >
-              <SocialIcon name="whatsapp" className="size-4" />
-            </a>
+            <Button asChild variant="glass" size="icon" className="border-transparent hover:bg-[#25D366]">
+              <a href={`https://wa.me/${clinic.whatsapp}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                <SocialIcon name="whatsapp" className="size-4" />
+              </a>
+            </Button>
           </div>
         </div>
 
         <div>
           <h3 className="text-sm font-semibold text-white">{dict.common.ourServices}</h3>
-          <ul className="mt-5 space-y-3 text-sm">
+          <ul className="mt-4 space-y-1 text-sm">
             {services.map((s) => (
               <li key={s.slug}>
-                <Link href={href(lang, `/services/${s.slug}`)} className="transition hover:text-white">
+                <Link href={href(lang, `/services/${s.slug}`)} className="inline-block py-1.5 transition hover:text-white">
                   {t(s.title, lang)}
                 </Link>
               </li>
@@ -62,23 +55,23 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
 
         <div>
           <h3 className="text-sm font-semibold text-white">{dict.common.quickLinks}</h3>
-          <ul className="mt-5 space-y-3 text-sm">
+          <ul className="mt-4 space-y-1 text-sm">
             {(["about", "team", "branches", "blog", "contact"] as const).map((item) => (
               <li key={item}>
-                <Link href={href(lang, `/${item}`)} className="transition hover:text-white">
+                <Link href={href(lang, `/${item}`)} className="inline-block py-1.5 transition hover:text-white">
                   {dict.nav[item]}
                 </Link>
               </li>
             ))}
             <li>
-              <Link href={href(lang, "/booking")} className="font-semibold text-lime-400 transition hover:text-lime-500">
+              <Link href={href(lang, "/booking")} className="inline-block py-1.5 font-semibold text-lime-400 transition hover:text-lime-500">
                 {dict.cta.bookNow}
               </Link>
             </li>
           </ul>
         </div>
 
-        <div>
+        <div className="col-span-2 md:col-span-1">
           <h3 className="text-sm font-semibold text-white">{dict.nav.branches}</h3>
           <div className="mt-5 space-y-4 text-sm">
             {cities.map((city) => (
@@ -119,8 +112,9 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           </div>
         </div>
       </div>
-      <div className="border-t border-white/10">
-        <div className="container-x flex flex-col items-center justify-between gap-2 py-6 text-xs sm:flex-row">
+      <Separator className="bg-white/10" />
+      <div>
+        <div className="container-x flex flex-col items-center justify-between gap-2 py-6 pb-24 text-center text-xs sm:flex-row sm:pb-6 sm:text-start">
           <p>
             © {year} {dict.common.clinicName}. {dict.common.rights}
           </p>
@@ -143,7 +137,7 @@ export function WhatsAppFab({ lang }: { lang: Locale }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp"
-      className="fixed bottom-5 end-5 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-[#25D366]/30 transition hover:scale-105"
+      className="fixed end-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 max-sm:[body:has([data-hide-fab])_&]:hidden flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-[#25D366]/30 transition-transform hover:scale-105 sm:end-5 sm:bottom-5"
     >
       <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366] opacity-30" aria-hidden />
       <SocialIcon name="whatsapp" className="relative size-7" />

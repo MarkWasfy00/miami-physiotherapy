@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
 
 @theme {
   /* Brand palette, taken from the Miami Clinic logo */
@@ -53,14 +56,63 @@
   }
 }
 
+/* shadcn/ui tokens, mapped onto the Miami Clinic brand palette */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #ffffff;
+  --foreground: var(--color-ink);
+  --card: #ffffff;
+  --card-foreground: var(--color-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand-600);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-lime-500);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-mist);
+  --muted-foreground: var(--color-ink-soft);
+  --accent: var(--color-brand-50);
+  --accent-foreground: var(--color-brand-700);
+  --destructive: #dc2626;
+  --border: var(--color-line);
+  --input: var(--color-line);
+  --ring: var(--color-brand-500);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    @apply font-sans;
   }
 
   body {
-    @apply bg-white text-ink antialiased;
+    @apply antialiased bg-background text-foreground;
   }
 
   ::selection {
@@ -70,38 +122,13 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-600;
   }
+  * {
+    @apply border-border;
+  }
 }
 
 @utility container-x {
   @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
-}
-
-@utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-60;
-}
-@utility btn-primary {
-  @apply btn bg-brand-600 text-white shadow-lg shadow-brand-600/25 hover:bg-brand-700 hover:shadow-brand-700/30;
-}
-@utility btn-lime {
-  @apply btn bg-lime-500 text-ink shadow-lg shadow-lime-500/25 hover:bg-lime-400;
-}
-@utility btn-outline {
-  @apply btn border border-line bg-white text-ink hover:border-brand-300 hover:text-brand-700;
-}
-@utility btn-ghost-light {
-  @apply btn border border-white/25 bg-white/10 text-white backdrop-blur hover:bg-white/20;
-}
-
-@utility eyebrow {
-  @apply inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700;
-}
-
-@utility card {
-  @apply rounded-3xl border border-line bg-white;
-}
-
-@utility field {
-  @apply w-full rounded-2xl border border-line bg-white px-4 py-3 text-sm text-ink transition placeholder:text-ink-soft/60 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none;
 }
 
 @layer components {
@@ -138,6 +165,173 @@
   .prose-article blockquote p {
     @apply m-0;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Team group portrait                                                 */
+/* ------------------------------------------------------------------ */
+
+.team-group-stage {
+  /* Portrait width and step between portraits; the stage height follows from them */
+  --w: 40%;
+  --step: 20%;
+  aspect-ratio: 5 / 4;
+}
+@media (min-width: 1024px) {
+  .team-group-stage {
+    --w: 29%;
+    --step: 23.66%;
+    aspect-ratio: 21 / 10;
+  }
+}
+
+.team-group-person {
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: calc(var(--i) * var(--step));
+  width: var(--w);
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+  /* Multiply lets the light studio backdrops melt into the shared gradient */
+  mix-blend-mode: multiply;
+  transform-origin: 50% 100%;
+  opacity: 0;
+  transform: translateY(18%) scale(0.94);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease;
+  /* Center-out entrance: the two middle portraits rise first */
+  transition-delay: calc((1.5 - min(var(--i), 3 - var(--i))) * 160ms);
+}
+/* The middle pair stands in front, like a group photo */
+.team-group-person:nth-child(2),
+.team-group-person:nth-child(3) {
+  z-index: 2;
+}
+.team-group-person:focus-visible {
+  outline: none;
+}
+.team-group-person:focus-visible .team-group-photo {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: -6px;
+}
+
+[data-in-view] .team-group-person {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+[data-in-view] .team-group-person:nth-child(2),
+[data-in-view] .team-group-person:nth-child(3) {
+  transform: scale(1.06);
+}
+[data-in-view][data-active] .team-group-person {
+  transition-delay: 0s;
+  filter: grayscale(0.6) brightness(1.05);
+  opacity: 0.6;
+}
+[data-in-view][data-active] .team-group-person[data-on] {
+  z-index: 3;
+  filter: none;
+  opacity: 1;
+  transform: translateY(-2%) scale(1.09);
+}
+
+.team-group-photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  mask-image: linear-gradient(to top, transparent 0, #000 24%, #000 84%, transparent 100%), linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%);
+  mask-composite: intersect;
+  animation: team-breathe 7s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1.7s);
+}
+
+.team-group-glow {
+  background:
+    radial-gradient(45% 55% at 50% 38%, color-mix(in oklab, var(--color-lime-400) 22%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 50% 100%, #fff, transparent 70%);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+[data-in-view] .team-group-glow {
+  opacity: 1;
+}
+
+.team-group-rings {
+  animation: team-spin 60s linear infinite;
+}
+
+.team-group-sheen {
+  z-index: 4;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
+  transform: translateX(-120%);
+  mix-blend-mode: soft-light;
+}
+[data-in-view] .team-group-sheen {
+  animation: team-sheen 9s ease-in-out 1.2s infinite;
+}
+
+.team-group-badge {
+  z-index: 5;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(0.9s + var(--d, 0s) * 0.3);
+}
+[data-in-view] .team-group-badge {
+  opacity: 1;
+  transform: none;
+  animation: float 6s ease-in-out infinite;
+  animation-delay: calc(1.6s + var(--d, 0s));
+}
+
+.team-group-name {
+  border-color: var(--color-line);
+  background: #fff;
+}
+.team-group-name[data-on] {
+  border-color: var(--color-brand-300);
+  box-shadow: 0 12px 30px -12px color-mix(in oklab, var(--color-brand-900) 25%, transparent);
+  transform: translateY(-2px);
+}
+
+@keyframes team-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5%);
+  }
+}
+
+@keyframes team-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes team-sheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  45%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* No looping animation work while the portrait is scrolled away */
+[data-paused] .team-group-photo,
+[data-paused] .team-group-rings,
+[data-paused] .team-group-sheen,
+[data-paused] .team-group-badge {
+  animation-play-state: paused;
 }
 
 /* Hide scrollbar for horizontal chip rows */

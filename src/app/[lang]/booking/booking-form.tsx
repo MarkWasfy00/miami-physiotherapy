@@ -11,7 +11,6 @@ import {
   Check,
   CheckCircle2,
   Clock,
-  Loader2,
   MapPin,
   Stethoscope,
   User,
@@ -19,7 +18,18 @@ import {
 import { branches, cities, clinic, services } from "@/lib/data";
 import { bookableDates, daySlots, formatTime, isPastSlot, type BookingState } from "@/lib/booking";
 import { href, t, type Locale } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { ServiceIcon, SocialIcon } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { submitBooking } from "./actions";
 
 const copy = {
@@ -203,12 +213,12 @@ export function BookingForm({ lang }: { lang: Locale }) {
         <span className="mx-auto flex size-20 items-center justify-center rounded-full bg-lime-500/15 text-lime-600">
           <CheckCircle2 className="size-10" aria-hidden />
         </span>
-        <h2 className="mt-6 text-3xl font-bold text-ink">{c.successTitle}</h2>
+        <h2 className="mt-6 text-2xl font-bold text-ink sm:text-3xl">{c.successTitle}</h2>
         <p className="mt-3 text-ink-soft">{c.successText}</p>
-        <p className="mt-5 inline-block rounded-2xl border-2 border-dashed border-brand-300 bg-brand-50 px-6 py-3 font-mono text-2xl font-bold tracking-widest text-brand-700" dir="ltr">
+        <p className="mt-5 inline-block rounded-2xl border-2 border-dashed border-brand-300 bg-brand-50 px-5 py-3 font-mono text-xl font-bold tracking-widest break-all text-brand-700 sm:px-6 sm:text-2xl" dir="ltr">
           {b.reference}
         </p>
-        <dl className="mt-8 grid gap-3 rounded-3xl border border-line p-6 text-start sm:grid-cols-2">
+        <dl className="mt-8 grid gap-4 rounded-3xl border p-5 text-start sm:grid-cols-2 sm:p-6">
           <SummaryRow icon={<Stethoscope className="size-4" />} label={copy[lang].steps[0]} value={t(bService.title, lang)} />
           <SummaryRow icon={<MapPin className="size-4" />} label={copy[lang].steps[1]} value={t(bBranch.name, lang)} />
           <SummaryRow
@@ -220,29 +230,28 @@ export function BookingForm({ lang }: { lang: Locale }) {
         </dl>
         <p className="mt-6 text-sm text-ink-soft">{c.bring}</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <a
-            href={`https://wa.me/${clinic.whatsapp}?text=${encodeURIComponent(waText)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn !bg-[#25D366] text-white hover:!bg-[#1fb457]"
-          >
-            <SocialIcon name="whatsapp" className="size-4" />
-            {c.sendWa}
-          </a>
-          <a href={icsFile(b, lang)} download={`miami-clinic-${b.reference}.ics`} className="btn-outline">
-            <CalendarPlus className="size-4" aria-hidden />
-            {c.addCal}
-          </a>
-          <Link href={href(lang)} className="btn-outline">
-            {c.home}
-          </Link>
+          <Button asChild variant="whatsapp">
+            <a href={`https://wa.me/${clinic.whatsapp}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noopener noreferrer">
+              <SocialIcon name="whatsapp" className="size-4" />
+              {c.sendWa}
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a href={icsFile(b, lang)} download={`miami-clinic-${b.reference}.ics`}>
+              <CalendarPlus aria-hidden />
+              {c.addCal}
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href={href(lang)}>{c.home}</Link>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div ref={topRef} className="grid scroll-mt-28 gap-8 lg:grid-cols-[1fr_20rem]">
+    <div ref={topRef} data-hide-fab className="grid scroll-mt-24 gap-8 lg:grid-cols-[1fr_20rem]">
       <form action={formAction} className="min-w-0" noValidate>
         <input type="hidden" name="service" value={service} />
         <input type="hidden" name="branch" value={branch} />
@@ -251,19 +260,19 @@ export function BookingForm({ lang }: { lang: Locale }) {
         <input type="hidden" name="locale" value={lang} />
 
         {/* Stepper */}
-        <ol className="mb-8 grid grid-cols-4 gap-2">
+        <ol className="mb-6 grid grid-cols-4 gap-2 sm:mb-8">
           {c.steps.map((label, i) => (
             <li key={label}>
               <button
                 type="button"
                 disabled={i > step}
                 onClick={() => setStep(i)}
-                className="group w-full text-start disabled:cursor-default"
+                className="group w-full touch-manipulation py-1 text-start disabled:cursor-default"
               >
                 <span className={`block h-1.5 rounded-full transition ${i <= step ? "bg-brand-600" : "bg-line"}`} />
-                <span className={`mt-2 flex items-center gap-1.5 text-xs font-semibold sm:text-sm ${i <= step ? "text-ink" : "text-ink-soft/60"}`}>
+                <span className={cn("mt-2 flex items-center gap-1 text-[11px] font-semibold min-[380px]:text-xs sm:gap-1.5 sm:text-sm", i <= step ? "text-ink" : "text-ink-soft/60")}>
                   {i < step ? (
-                    <Check className="size-4 text-lime-600" aria-hidden />
+                    <Check className="size-3.5 shrink-0 text-lime-600 sm:size-4" aria-hidden />
                   ) : (
                     <span className="hidden sm:inline">{i + 1}.</span>
                   )}
@@ -279,7 +288,7 @@ export function BookingForm({ lang }: { lang: Locale }) {
           <fieldset className="min-w-0">
             <legend className="text-xl font-bold text-ink">{c.service}</legend>
             <p className="mt-1 text-sm text-ink-soft">{c.notSure}</p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2">
               {services.map((s) => (
                 <OptionCard
                   key={s.slug}
@@ -331,60 +340,68 @@ export function BookingForm({ lang }: { lang: Locale }) {
         {step === 2 && (
           <fieldset className="min-w-0">
             <legend className="text-xl font-bold text-ink">{c.date}</legend>
-            <div className="no-scrollbar -mx-4 mt-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2">
-              {dates.map((d) => {
-                const active = d === date;
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => {
-                      setDate(d);
-                      setTime("");
-                    }}
-                    className={`flex w-18 shrink-0 snap-start flex-col items-center rounded-2xl border px-2 py-3 transition ${
-                      active ? "border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-600/25" : "border-line bg-white hover:border-brand-300"
-                    }`}
-                    aria-pressed={active}
-                  >
-                    <span className={`text-xs ${active ? "text-white/80" : "text-ink-soft"}`}>
-                      {formatDay(d, lang, { weekday: "short" })}
-                    </span>
-                    <span className="mt-1 text-xl font-bold">{formatDay(d, lang, { day: "numeric" })}</span>
-                    <span className={`text-xs ${active ? "text-white/80" : "text-ink-soft"}`}>
-                      {formatDay(d, lang, { month: "short" })}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <ToggleGroup
+              type="single"
+              value={date}
+              onValueChange={(d) => {
+                if (!d) return;
+                setDate(d);
+                setTime("");
+              }}
+              spacing={2}
+              aria-label={c.date}
+              className="no-scrollbar -mx-4 mt-4 w-auto snap-x overflow-x-auto overscroll-x-contain px-4 pb-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
+            >
+              {dates.map((d) => (
+                <ToggleGroupItem
+                  key={d}
+                  value={d}
+                  className="group/day h-auto w-18 snap-start flex-col gap-0 rounded-2xl border bg-white px-2 py-3 hover:border-brand-300 hover:bg-white data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600 data-[state=on]:text-white data-[state=on]:shadow-lg data-[state=on]:shadow-brand-600/25"
+                >
+                  <span className="text-xs font-normal text-ink-soft group-data-[state=on]/day:text-white/80">
+                    {formatDay(d, lang, { weekday: "short" })}
+                  </span>
+                  <span className="mt-1 text-xl font-bold">{formatDay(d, lang, { day: "numeric" })}</span>
+                  <span className="text-xs font-normal text-ink-soft group-data-[state=on]/day:text-white/80">
+                    {formatDay(d, lang, { month: "short" })}
+                  </span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
 
             <div className="mt-8 flex items-center justify-between">
-              <p className="text-xl font-bold text-ink">{c.time}</p>
-              {loadingSlots && <Loader2 className="size-5 animate-spin text-brand-600" aria-hidden />}
+              <p id="time-label" className="text-xl font-bold text-ink">
+                {c.time}
+              </p>
+              {loadingSlots && <Spinner className="size-5 text-brand-600" />}
             </div>
-            {fieldError("time") && <p className="mt-2 text-sm font-medium text-red-600">{c.errors.time}</p>}
+            {fieldError("time") && (
+              <Alert variant="destructive" className="mt-3">
+                <AlertDescription>{c.errors.time}</AlertDescription>
+              </Alert>
+            )}
             {availableCount === 0 ? (
               <p className="mt-4 rounded-2xl bg-mist p-5 text-sm text-ink-soft">{c.noSlots}</p>
             ) : (
-              <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+              <ToggleGroup
+                type="single"
+                value={time}
+                onValueChange={setTime}
+                spacing={2}
+                aria-labelledby="time-label"
+                className="mt-4 grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-5"
+              >
                 {slots.map((s) => (
-                  <button
+                  <ToggleGroupItem
                     key={s.time}
-                    type="button"
+                    value={s.time}
                     disabled={s.disabled}
-                    onClick={() => setTime(s.time)}
-                    aria-pressed={time === s.time}
-                    className={`rounded-xl border px-2 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:border-transparent disabled:bg-mist disabled:text-ink-soft/40 disabled:line-through ${
-                      time === s.time
-                        ? "border-brand-600 bg-brand-600 text-white"
-                        : "border-line bg-white text-ink hover:border-brand-300"
-                    }`}
+                    className="h-12 rounded-xl border bg-white text-sm font-semibold text-ink hover:border-brand-300 hover:bg-white disabled:border-transparent disabled:bg-mist disabled:text-ink-soft/40 disabled:line-through disabled:opacity-100 data-[state=on]:border-brand-600 data-[state=on]:bg-brand-600 data-[state=on]:text-white"
                   >
                     {formatTime(s.time, lang)}
-                  </button>
+                  </ToggleGroupItem>
                 ))}
-              </div>
+              </ToggleGroup>
             )}
           </fieldset>
         )}
@@ -394,89 +411,112 @@ export function BookingForm({ lang }: { lang: Locale }) {
           <fieldset key={prev("submittedAt") ?? "fresh"} className="min-w-0 space-y-5">
             <legend className="text-xl font-bold text-ink">{c.details}</legend>
             {state.status === "error" && (
-              <p className="rounded-2xl bg-red-50 p-4 text-sm font-medium text-red-700" role="alert">
-                {state.message === "server" ? c.errors.server : c.errors.generic}
-              </p>
+              <Alert variant="destructive" className="rounded-2xl border-destructive/20 bg-red-50 p-4">
+                <AlertDescription className="font-medium text-red-700">
+                  {state.message === "server" ? c.errors.server : c.errors.generic}
+                </AlertDescription>
+              </Alert>
             )}
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-semibold text-ink">{c.name} *</span>
-                <input name="name" defaultValue={prev("name")} required minLength={3} autoComplete="name" className="field" aria-invalid={fieldError("name")} />
-                {fieldError("name") && <span className="mt-1 block text-xs text-red-600">{c.errors.name}</span>}
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-semibold text-ink">{c.phone} *</span>
-                <input
+              <Field data-invalid={fieldError("name") || undefined}>
+                <FieldLabel htmlFor="bk-name" className="font-semibold text-ink">
+                  {c.name} *
+                </FieldLabel>
+                <Input
+                  id="bk-name"
+                  name="name"
+                  defaultValue={prev("name")}
+                  required
+                  minLength={3}
+                  autoComplete="name"
+                  enterKeyHint="next"
+                  aria-invalid={fieldError("name")}
+                />
+                {fieldError("name") && <FieldError>{c.errors.name}</FieldError>}
+              </Field>
+              <Field data-invalid={fieldError("phone") || undefined}>
+                <FieldLabel htmlFor="bk-phone" className="font-semibold text-ink">
+                  {c.phone} *
+                </FieldLabel>
+                <Input
+                  id="bk-phone"
                   name="phone"
                   defaultValue={prev("phone")}
                   type="tel"
                   inputMode="tel"
                   required
                   autoComplete="tel"
+                  enterKeyHint="next"
                   placeholder="01X XXXX XXXX"
                   dir="ltr"
-                  className="field text-start rtl:text-end"
+                  className="text-start rtl:text-end"
                   aria-invalid={fieldError("phone")}
                 />
-                <span className={`mt-1 block text-xs ${fieldError("phone") ? "text-red-600" : "text-ink-soft"}`}>
-                  {fieldError("phone") ? c.errors.phone : c.phoneHint}
-                </span>
-              </label>
-              <label className="block">
-                <span className="mb-1.5 block text-sm font-semibold text-ink">{c.age}</span>
-                <input name="age" defaultValue={prev("age")} type="number" inputMode="numeric" min={1} max={110} className="field" />
-              </label>
-              <div>
-                <span className="mb-1.5 block text-sm font-semibold text-ink">{c.firstVisit}</span>
-                <div className="grid grid-cols-2 gap-2">
+                {fieldError("phone") ? <FieldError>{c.errors.phone}</FieldError> : <FieldDescription className="text-xs">{c.phoneHint}</FieldDescription>}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="bk-age" className="font-semibold text-ink">
+                  {c.age}
+                </FieldLabel>
+                <Input id="bk-age" name="age" defaultValue={prev("age")} type="number" inputMode="numeric" min={1} max={110} />
+              </Field>
+              <Field>
+                <Label id="bk-first" className="font-semibold text-ink">
+                  {c.firstVisit}
+                </Label>
+                <RadioGroup name="firstVisit" defaultValue={prev("firstVisit") || "yes"} aria-labelledby="bk-first" className="grid-cols-2">
                   {(["yes", "no"] as const).map((v) => (
-                    <label
+                    <Label
                       key={v}
-                      className="flex cursor-pointer items-center justify-center rounded-2xl border border-line px-3 py-3 text-sm font-medium has-checked:border-brand-600 has-checked:bg-brand-50 has-checked:text-brand-700"
+                      className="flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 text-sm font-medium has-data-[state=checked]:border-brand-600 has-data-[state=checked]:bg-brand-50 has-data-[state=checked]:text-brand-700"
                     >
-                      <input type="radio" name="firstVisit" value={v} defaultChecked={v === (prev("firstVisit") || "yes")} className="sr-only" />
+                      <RadioGroupItem value={v} />
                       {c[v]}
-                    </label>
+                    </Label>
                   ))}
-                </div>
-              </div>
+                </RadioGroup>
+              </Field>
             </div>
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-semibold text-ink">{c.notes}</span>
-              <textarea name="notes" defaultValue={prev("notes")} rows={4} maxLength={500} placeholder={c.notesPh} className="field resize-none" />
-            </label>
+            <Field>
+              <FieldLabel htmlFor="bk-notes" className="font-semibold text-ink">
+                {c.notes}
+              </FieldLabel>
+              <Textarea id="bk-notes" name="notes" defaultValue={prev("notes")} rows={4} maxLength={500} placeholder={c.notesPh} className="resize-none" />
+            </Field>
           </fieldset>
         )}
 
         {/* Navigation */}
-        <div className="mt-10 flex items-center justify-between gap-3 border-t border-line pt-6">
-          <button
+        {/* Sticks to the bottom of the screen on phones so the next action is always in reach */}
+        <div className="sticky bottom-0 z-10 -mx-4 mt-8 flex items-center justify-between gap-3 border-t bg-white/95 px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:mx-0 sm:mt-10 sm:bg-transparent sm:px-0 sm:pt-6 sm:pb-0 sm:backdrop-blur-none">
+          <Button
             type="button"
+            variant="outline"
             onClick={() => setStep((s) => Math.max(0, s - 1))}
-            className={`btn-outline ${step === 0 ? "invisible" : ""}`}
+            className={cn(step === 0 && "invisible")}
           >
-            <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
+            <ArrowLeft className="rtl:-scale-x-100" aria-hidden />
             {c.back}
-          </button>
+          </Button>
           {step < 3 ? (
             step >= 2 && (
-              <button type="button" disabled={!canContinue} onClick={() => setStep((s) => s + 1)} className="btn-primary">
+              <Button type="button" disabled={!canContinue} onClick={() => setStep((s) => s + 1)} className="flex-1 sm:flex-none">
                 {c.next}
-                <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
-              </button>
+                <ArrowRight className="rtl:-scale-x-100" aria-hidden />
+              </Button>
             )
           ) : (
-            <button type="submit" disabled={pending} className="btn-primary !px-8">
-              {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <CalendarCheck className="size-4" aria-hidden />}
+            <Button type="submit" disabled={pending} className="flex-1 sm:flex-none sm:px-8">
+              {pending ? <Spinner /> : <CalendarCheck aria-hidden />}
               {c.confirm}
-            </button>
+            </Button>
           )}
         </div>
       </form>
 
       {/* Summary */}
       <aside className="lg:sticky lg:top-28 lg:self-start">
-        <div className="rounded-4xl bg-mist p-6">
+        <div className="rounded-4xl bg-mist p-5 sm:p-6">
           <p className="font-bold text-ink">{c.summary}</p>
           <dl className="mt-5 space-y-4">
             <SummaryRow icon={<Stethoscope className="size-4" />} label={c.steps[0]} value={selectedService ? t(selectedService.title, lang) : "—"} />
@@ -490,18 +530,17 @@ export function BookingForm({ lang }: { lang: Locale }) {
           <div className="mt-6 border-t border-line pt-5 text-sm text-ink-soft">
             <p>{lang === "ar" ? "تفضل الحجز عبر الهاتف أو واتساب؟" : "Prefer to book by phone or WhatsApp?"}</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <a href={`tel:${clinic.phone}`} className="btn-outline !px-4 !py-2 text-xs" dir="ltr">
-                {clinic.phone}
-              </a>
-              <a
-                href={`https://wa.me/${clinic.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-outline !px-4 !py-2 text-xs"
-              >
-                <SocialIcon name="whatsapp" className="size-3.5 text-[#25D366]" />
-                WhatsApp
-              </a>
+              <Button asChild variant="outline" size="sm">
+                <a href={`tel:${clinic.phone}`} dir="ltr">
+                  {clinic.phone}
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <a href={`https://wa.me/${clinic.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                  <SocialIcon name="whatsapp" className="size-3.5 text-[#25D366]" />
+                  WhatsApp
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -524,26 +563,32 @@ function OptionCard({
   text: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-pressed={selected}
-      className={`flex items-start gap-4 rounded-3xl border p-5 text-start transition ${
-        selected ? "border-brand-600 bg-brand-50 ring-4 ring-brand-100" : "border-line bg-white hover:border-brand-300"
-      }`}
+    <Card
+      className={cn(
+        "gap-0 p-0 transition hover:border-brand-300",
+        selected && "border-brand-600 bg-brand-50 ring-4 ring-brand-100 hover:border-brand-600",
+      )}
     >
-      <span
-        className={`flex size-11 shrink-0 items-center justify-center rounded-2xl ${
-          selected ? "bg-brand-600 text-white" : "bg-mist text-brand-600"
-        }`}
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-pressed={selected}
+        className="flex h-full touch-manipulation items-start gap-4 p-4 text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:p-5"
       >
-        {icon}
-      </span>
-      <span>
-        <span className="block font-bold text-ink">{title}</span>
-        <span className="mt-1 block text-sm leading-6 text-ink-soft">{text}</span>
-      </span>
-    </button>
+        <span
+          className={cn(
+            "flex size-11 shrink-0 items-center justify-center rounded-2xl",
+            selected ? "bg-brand-600 text-white" : "bg-mist text-brand-600",
+          )}
+        >
+          {icon}
+        </span>
+        <span>
+          <span className="block font-bold text-ink">{title}</span>
+          <span className="mt-1 block text-sm leading-6 text-ink-soft">{text}</span>
+        </span>
+      </button>
+    </Card>
   );
 }
 
