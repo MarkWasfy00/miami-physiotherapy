@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -6,8 +7,12 @@ export default function NotFound() {
       <p className="text-7xl font-bold text-brand-600">404</p>
       <h1 className="mt-4 text-2xl font-bold text-ink">الصفحة غير موجودة · Page not found</h1>
       <div className="mt-8 flex gap-3">
-        <Link href="/ar" className="btn-primary">الرئيسية</Link>
-        <Link href="/en" className="btn-outline">Home</Link>
+        <Button asChild>
+          <Link href="/ar">الرئيسية</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/en">Home</Link>
+        </Button>
       </div>
     </section>
   );

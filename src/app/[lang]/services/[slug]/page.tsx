@@ -8,6 +8,8 @@ import { getDictionary, href, isLocale, locales, t } from "@/lib/i18n";
 import { breadcrumbJsonLd, JsonLd, pageAlternates } from "@/lib/seo";
 import { CtaBanner, FaqList, PageHero, ServiceCard } from "@/components/ui/blocks";
 import { ServiceIcon, SocialIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export function generateStaticParams() {
   return locales.flatMap((lang) => services.map((s) => ({ lang, slug: s.slug })));
@@ -45,25 +47,29 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
         title={title}
         text={t(service.short, lang)}
       >
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href={`${href(lang, "/booking")}?service=${service.slug}`} className="btn-primary">
-            <CalendarCheck className="size-4" aria-hidden />
-            {dict.cta.bookNow}
-          </Link>
-          <a href={`tel:${clinic.phone}`} className="btn-outline" dir="ltr">
-            <Phone className="size-4" aria-hidden />
-            {clinic.phone}
-          </a>
+        <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+          <Button asChild>
+            <Link href={`${href(lang, "/booking")}?service=${service.slug}`}>
+              <CalendarCheck aria-hidden />
+              {dict.cta.bookNow}
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <a href={`tel:${clinic.phone}`} dir="ltr">
+              <Phone aria-hidden />
+              {clinic.phone}
+            </a>
+          </Button>
         </div>
       </PageHero>
 
-      <section className="container-x grid gap-12 py-16 sm:py-24 lg:grid-cols-[1fr_22rem]">
+      <section className="container-x grid gap-10 py-10 sm:gap-12 sm:py-24 lg:grid-cols-[1fr_22rem]">
         <div>
-          <div className="relative aspect-[16/9] overflow-hidden rounded-4xl bg-mist">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-mist sm:rounded-4xl">
             <Image src={service.image} alt={title} fill priority sizes="(min-width: 1024px) 60vw, 100vw" className="object-cover" />
           </div>
 
-          <p className="mt-10 text-lg leading-8 text-ink/85">{t(service.intro, lang)}</p>
+          <p className="mt-8 text-base leading-8 text-ink/85 sm:mt-10 sm:text-lg">{t(service.intro, lang)}</p>
 
           <h2 className="mt-12 text-2xl font-bold text-ink">{ar ? "الحالات التي نعالجها" : "Conditions we treat"}</h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -92,9 +98,9 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
           <h2 className="mt-12 text-2xl font-bold text-ink">{ar ? "التقنيات المستخدمة" : "Techniques used"}</h2>
           <div className="mt-6 flex flex-wrap gap-2">
             {t(service.techniques, lang).map((x) => (
-              <span key={x} className="rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700">
+              <Badge key={x} variant="soft" className="h-9 px-4 text-sm">
                 {x}
-              </span>
+              </Badge>
             ))}
           </div>
 
@@ -111,7 +117,7 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
         </div>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <div className="rounded-4xl bg-ink p-7 text-white">
+          <div className="rounded-4xl bg-ink p-6 text-white sm:p-7">
             <span className="flex size-12 items-center justify-center rounded-2xl bg-white/10 text-lime-400">
               <ServiceIcon name={service.icon} className="size-6" />
             </span>
@@ -121,28 +127,27 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
                 ? "احجز جلسة تقييم وسنضع لك خطة علاج واضحة."
                 : "Book an assessment and we'll build you a clear treatment plan."}
             </p>
-            <Link href={`${href(lang, "/booking")}?service=${service.slug}`} className="btn-lime mt-6 w-full">
-              <CalendarCheck className="size-4" aria-hidden />
-              {dict.cta.bookNow}
-            </Link>
-            <a
-              href={`https://wa.me/${clinic.whatsapp}?text=${encodeURIComponent(title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-ghost-light mt-3 w-full"
-            >
-              <SocialIcon name="whatsapp" className="size-4" />
-              {dict.cta.whatsapp}
-            </a>
+            <Button asChild variant="secondary" className="mt-6 w-full">
+              <Link href={`${href(lang, "/booking")}?service=${service.slug}`}>
+                <CalendarCheck aria-hidden />
+                {dict.cta.bookNow}
+              </Link>
+            </Button>
+            <Button asChild variant="glass" className="mt-3 w-full">
+              <a href={`https://wa.me/${clinic.whatsapp}?text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer">
+                <SocialIcon name="whatsapp" className="size-4" />
+                {dict.cta.whatsapp}
+              </a>
+            </Button>
             <p className="mt-6 border-t border-white/10 pt-5 text-xs text-white/60">{dict.common.hours}</p>
           </div>
         </aside>
       </section>
 
-      <section className="bg-mist py-16 sm:py-24">
+      <section className="bg-mist py-12 sm:py-24">
         <div className="container-x">
           <h2 className="text-2xl font-bold text-ink sm:text-3xl">{ar ? "خدمات أخرى" : "Other services"}</h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((s) => (
               <ServiceCard key={s.slug} service={s} lang={lang} dict={dict} />
             ))}

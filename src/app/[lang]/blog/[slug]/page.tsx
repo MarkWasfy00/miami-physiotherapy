@@ -9,6 +9,8 @@ import { getDictionary, href, isLocale, locales, t } from "@/lib/i18n";
 import { breadcrumbJsonLd, JsonLd, pageAlternates } from "@/lib/seo";
 import { BlogCard, CtaBanner } from "@/components/ui/blocks";
 import { SocialIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export function generateStaticParams() {
   return locales.flatMap((lang) => getPostSlugs().map((slug) => ({ lang, slug })));
@@ -43,19 +45,16 @@ export default async function PostPage({ params }: PageProps<"/[lang]/blog/[slug
     <>
       <article>
         <header className="bg-mist">
-          <div className="container-x max-w-4xl py-12 sm:py-16">
+          <div className="container-x max-w-4xl py-10 sm:py-16">
             <Link href={href(lang, "/blog")} className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:underline">
               <ArrowLeft className="size-4 rtl:-scale-x-100" aria-hidden />
               {dict.common.backToBlog}
             </Link>
             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-ink-soft">
               {categories[post.category] && (
-                <Link
-                  href={href(lang, `/blog/category/${post.category}`)}
-                  className="rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white"
-                >
-                  {t(categories[post.category], lang)}
-                </Link>
+                <Badge asChild className="h-7 px-3">
+                  <Link href={href(lang, `/blog/category/${post.category}`)}>{t(categories[post.category], lang)}</Link>
+                </Badge>
               )}
               <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
               <span className="flex items-center gap-1">
@@ -63,8 +62,8 @@ export default async function PostPage({ params }: PageProps<"/[lang]/blog/[slug
                 {post.readingMinutes} {dict.common.minRead}
               </span>
             </div>
-            <h1 className="mt-5 text-3xl leading-tight font-bold tracking-tight text-balance text-ink sm:text-5xl">{post.title}</h1>
-            <p className="mt-5 text-lg leading-8 text-ink-soft">{post.description}</p>
+            <h1 className="mt-5 text-[1.75rem] leading-tight font-bold tracking-tight text-balance text-ink sm:text-5xl">{post.title}</h1>
+            <p className="mt-5 text-base leading-7 text-ink-soft sm:text-lg sm:leading-8">{post.description}</p>
             <div className="mt-6 flex items-center gap-3">
               <span className="flex size-10 items-center justify-center rounded-full bg-white p-1.5 shadow-sm">
                 <Image src="/logo-mark.png" alt="" width={24} height={30} className="h-7 w-auto" />
@@ -77,12 +76,12 @@ export default async function PostPage({ params }: PageProps<"/[lang]/blog/[slug
         </header>
 
         <div className="container-x max-w-6xl">
-          <div className="relative -mt-0 aspect-[16/9] overflow-hidden rounded-4xl bg-mist sm:mt-0">
+          <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-3xl bg-mist sm:mt-0 sm:rounded-4xl">
             <Image src={post.image} alt={post.title} fill priority sizes="(min-width: 1152px) 1152px, 100vw" className="object-cover" />
           </div>
         </div>
 
-        <div className="container-x grid max-w-6xl gap-12 py-12 lg:grid-cols-[1fr_17rem] lg:py-16">
+        <div className="container-x grid max-w-6xl gap-10 py-10 lg:grid-cols-[1fr_17rem] lg:gap-12 lg:py-16">
           <div className="prose-article min-w-0" dangerouslySetInnerHTML={{ __html: post.html }} />
 
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
@@ -105,29 +104,28 @@ export default async function PostPage({ params }: PageProps<"/[lang]/blog/[slug
               <p className="mt-2 text-sm leading-6 text-white/80">
                 {ar ? "احجز جلسة تقييم في أقرب فرع لك." : "Book an assessment at your nearest branch."}
               </p>
-              <Link href={href(lang, "/booking")} className="btn-lime mt-5 w-full">
-                <CalendarCheck className="size-4" aria-hidden />
-                {dict.cta.book}
-              </Link>
-              <a
-                href={`https://wa.me/${clinic.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-ghost-light mt-2 w-full"
-              >
-                <SocialIcon name="whatsapp" className="size-4" />
-                {dict.cta.whatsapp}
-              </a>
+              <Button asChild variant="secondary" className="mt-5 w-full">
+                <Link href={href(lang, "/booking")}>
+                  <CalendarCheck aria-hidden />
+                  {dict.cta.book}
+                </Link>
+              </Button>
+              <Button asChild variant="glass" className="mt-2 w-full">
+                <a href={`https://wa.me/${clinic.whatsapp}`} target="_blank" rel="noopener noreferrer">
+                  <SocialIcon name="whatsapp" className="size-4" />
+                  {dict.cta.whatsapp}
+                </a>
+              </Button>
             </div>
           </aside>
         </div>
       </article>
 
       {related.length > 0 && (
-        <section className="bg-mist py-16 sm:py-20">
+        <section className="bg-mist py-12 sm:py-20">
           <div className="container-x">
             <h2 className="text-2xl font-bold text-ink sm:text-3xl">{dict.common.related}</h2>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {related.map((p) => (
                 <BlogCard key={p.slug} post={p} lang={lang} dict={dict} />
               ))}

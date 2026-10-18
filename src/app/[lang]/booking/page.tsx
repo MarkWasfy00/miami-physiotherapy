@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { getDictionary, href, isLocale, type Locale } from "@/lib/i18n";
 import { pageAlternates } from "@/lib/seo";
 import { PageHero } from "@/components/ui/blocks";
+import { Spinner } from "@/components/ui/spinner";
 import { BookingForm } from "./booking-form";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/booking">): Promise<Metadata> {
@@ -37,16 +38,16 @@ export default async function BookingPage({ params }: PageProps<"/[lang]/booking
             : "Choose your service, branch and time — our team will contact you to confirm."
         }
       >
-        <p className="mt-6 inline-flex items-center gap-2 text-sm text-ink-soft">
-          <ShieldCheck className="size-4 text-lime-600" aria-hidden />
+        <p className="mt-6 inline-flex items-start gap-2 text-sm text-ink-soft sm:items-center">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-lime-600 sm:mt-0" aria-hidden />
           {ar ? "بياناتك آمنة ولن تُستخدم إلا لتأكيد موعدك." : "Your details are only used to confirm your appointment."}
         </p>
       </PageHero>
-      <section className="container-x py-12 sm:py-16">
+      <section className="container-x py-8 sm:py-16">
         <Suspense
           fallback={
             <div className="flex min-h-96 items-center justify-center rounded-4xl border border-line">
-              <Loader2 className="size-8 animate-spin text-brand-600" aria-label="Loading" />
+              <Spinner className="size-8 text-brand-600" />
             </div>
           }
         >

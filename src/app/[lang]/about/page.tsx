@@ -7,6 +7,8 @@ import { approachSteps, stats, team } from "@/lib/data";
 import { getDictionary, href, isLocale, t, type Locale } from "@/lib/i18n";
 import { pageAlternates } from "@/lib/seo";
 import { CtaBanner, PageHero, SectionHeading, TeamCard } from "@/components/ui/blocks";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/about">): Promise<Metadata> {
   const { lang } = await params;
@@ -63,7 +65,7 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
         }
       />
 
-      <section className="container-x grid items-center gap-14 py-16 sm:py-24 lg:grid-cols-2">
+      <section className="container-x grid items-center gap-10 py-14 sm:gap-14 sm:py-24 lg:grid-cols-2">
         <div className="relative aspect-[4/3] overflow-hidden rounded-4xl bg-mist">
           <Image
             src="/images/photos/manual-therapy.webp"
@@ -79,7 +81,7 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
             eyebrow={ar ? "قصتنا" : "Our story"}
             title={ar ? "لا أجهزة ثابتة، ولا تمارين موحدة للجميع" : "No fixed machines. No one-size-fits-all routines."}
           />
-          <div className="mt-6 space-y-4 text-lg leading-8 text-ink-soft">
+          <div className="mt-6 space-y-4 text-base leading-7 text-ink-soft sm:text-lg sm:leading-8">
             <p>
               {ar
                 ? "يبدأ العلاج عندنا بالاستماع إليك: تاريخك المرضي، أعراضك، وما الذي أصبح صعباً في حياتك اليومية. بعدها نقيّم الحركة والقوة والنشاط، ونحدد معك أهدافاً واضحة."
@@ -95,10 +97,10 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
       </section>
 
       <section className="bg-ink py-14 text-white">
-        <div className="container-x grid grid-cols-2 gap-8 lg:grid-cols-4">
+        <div className="container-x grid grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4">
           {stats.map((s) => (
             <div key={s.value} className="text-center">
-              <p className="text-4xl font-bold text-lime-400" dir="ltr">
+              <p className="text-3xl font-bold text-lime-400 sm:text-4xl" dir="ltr">
                 {s.value}
               </p>
               <p className="mt-2 text-sm text-white/70">{t(s.label, lang)}</p>
@@ -110,13 +112,13 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
       <section className="container-x py-16 sm:py-24">
         <div className="grid gap-6 md:grid-cols-3">
           {pillars.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="card p-8">
+            <Card key={title} className="gap-0 p-6 sm:p-8">
               <span className="flex size-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
                 <Icon className="size-6" aria-hidden />
               </span>
               <h2 className="mt-5 text-xl font-bold text-ink">{title}</h2>
               <p className="mt-3 leading-7 text-ink-soft">{text}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
@@ -126,11 +128,11 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
           <SectionHeading eyebrow={ar ? "منهجنا" : "Our approach"} title={ar ? "أربع خطوات نحو التعافي" : "Four steps to recovery"} />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {approachSteps.map((s, i) => (
-              <div key={i} className="card relative p-7">
+              <Card key={i} className="relative gap-0 p-6 sm:p-7">
                 <span className="text-5xl font-bold text-brand-100">0{i + 1}</span>
                 <h3 className="mt-3 text-lg font-bold text-ink">{t(s.title, lang)}</h3>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{t(s.text, lang)}</p>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
@@ -142,10 +144,12 @@ export default async function AboutPage({ params }: PageProps<"/[lang]/about">) 
           eyebrow={dict.nav.team}
           title={ar ? "تعرف على الفريق الطبي" : "Meet the clinical team"}
           action={
-            <Link href={href(lang, "/team")} className="btn-outline shrink-0">
-              {dict.cta.viewAll}
-              <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden />
-            </Link>
+            <Button asChild variant="outline" className="shrink-0 self-start md:self-auto">
+              <Link href={href(lang, "/team")}>
+                {dict.cta.viewAll}
+                <ArrowRight className="rtl:-scale-x-100" aria-hidden />
+              </Link>
+            </Button>
           }
         />
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

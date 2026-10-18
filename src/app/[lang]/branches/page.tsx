@@ -32,12 +32,12 @@ export default async function BranchesPage({ params }: PageProps<"/[lang]/branch
         text={`${ar ? "خمسة فروع في الإسكندرية والقاهرة." : "Five branches across Alexandria and Cairo."} ${dict.common.hours}.`}
       />
       {cities.map((city) => (
-        <section key={city.id} className="container-x py-12 first-of-type:pt-16 sm:py-16">
+        <section key={city.id} className="container-x py-10 first-of-type:pt-12 sm:py-16 sm:first-of-type:pt-16">
           <h2 className="flex items-center gap-3 text-2xl font-bold text-ink">
             <span className="h-8 w-1.5 rounded-full bg-lime-500" aria-hidden />
             {t(city.name, lang)}
           </h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {branches
               .filter((b) => b.city === city.id)
               .map((b) => (
